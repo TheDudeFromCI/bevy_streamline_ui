@@ -7,11 +7,13 @@ mod background;
 mod children;
 mod position;
 mod text;
+mod text_field;
 
 pub use background::*;
 pub use children::*;
 pub use position::*;
 pub use text::*;
+pub use text_field::*;
 
 use crate::prelude::NodeBundleBuilder;
 

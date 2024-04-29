@@ -1,17 +1,15 @@
-//! Contains blocks related to the text in a node.
+//! Contains blocks related to the text field of a node.
 
 use bevy::prelude::*;
 use bevy::text::BreakLineOn;
 
 use super::{AnchorPoint, DataBlock};
+use crate::prelude::text_field::TextField;
 use crate::prelude::{NodeBundleBuilder, NodeBundleType};
 
-/// Defines a section of text.
+/// Defines a text field for a node.
 #[derive(Debug, Clone)]
-pub struct NodeTextSection {
-    /// The text to display.
-    pub text: String,
-
+pub struct NodeTextField {
     /// The font to use for the text.
     pub font: String,
 
@@ -20,60 +18,48 @@ pub struct NodeTextSection {
 
     /// The color of the text.
     pub color: Color,
-}
 
-impl Default for NodeTextSection {
-    fn default() -> Self {
-        Self {
-            text: Default::default(),
-            font: Default::default(),
-            font_size: 16.0,
-            color: Color::BLACK,
-        }
-    }
-}
+    /// The maximum number of characters that can be entered.
+    pub max_chars: Option<usize>,
 
-/// Defines the text for a node.
-#[derive(Debug, Clone)]
-pub struct NodeText {
+    /// Whether or not the text field may have multiple lines.
+    pub single_line: bool,
+
+    /// The default text to display when the field is empty.
+    pub placeholder: Option<String>,
+
+    /// The color of the placeholder text.
+    pub placeholder_color: Color,
+
     /// The anchor point for the text.
     pub anchor_point: AnchorPoint,
-
-    /// The sections of the text.
-    pub sections: Vec<NodeTextSection>,
 
     /// The line break behavior for the text.
     pub line_break: BreakLineOn,
 }
 
-impl Default for NodeText {
+impl Default for NodeTextField {
     fn default() -> Self {
         Self {
-            anchor_point: Default::default(),
-            sections: Default::default(),
+            font: Default::default(),
+            font_size: 16.0,
+            color: Color::BLACK,
+            max_chars: None,
+            single_line: false,
+            placeholder: None,
+            placeholder_color: Color::GRAY,
+            anchor_point: AnchorPoint::CenterLeft,
             line_break: BreakLineOn::WordBoundary,
         }
     }
 }
 
-impl DataBlock for NodeText {
+impl DataBlock for NodeTextField {
     fn apply_to_node(self, node: &mut NodeBundleBuilder, asset_server: &AssetServer) {
         node.bundle_type(NodeBundleType::Text);
 
-        let text = Text {
+        node.insert(Text {
             linebreak_behavior: self.line_break,
-            sections: self
-                .sections
-                .into_iter()
-                .map(|section| TextSection {
-                    value: section.text,
-                    style: TextStyle {
-                        font: asset_server.load(&section.font),
-                        font_size: section.font_size,
-                        color: section.color,
-                    },
-                })
-                .collect(),
             justify: match self.anchor_point {
                 AnchorPoint::TopLeft => JustifyText::Left,
                 AnchorPoint::TopCenter => JustifyText::Center,
@@ -85,8 +71,17 @@ impl DataBlock for NodeText {
                 AnchorPoint::BottomCenter => JustifyText::Center,
                 AnchorPoint::BottomRight => JustifyText::Right,
             },
-        };
-        node.insert(text);
+            ..default()
+        });
+
+        node.insert(TextField {
+            font: asset_server.load(&self.font),
+            font_size: self.font_size,
+            font_color: self.color,
+            placeholder_text: self.placeholder,
+            placeholder_color: self.placeholder_color,
+            ..default()
+        });
     }
 
     fn apply_to_parent(&self, node: &mut NodeBundleBuilder, _: &AssetServer) {

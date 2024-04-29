@@ -38,9 +38,18 @@ fn title_screen() -> UiNode {
                                 TextSectionBuilder::new("Streamline\nUI")
                                     .font("fonts/FiraMono-Medium.ttf")
                                     .color(Color::WHITE)
-                                    .text_size(32.0),
+                                    .font_size(32.0),
                             ),
                     )
+                    .position(PositionBuilder::relative().size(Val::Px(300.0), Val::Auto)),
+                )
+                .child(
+                    UiNodeBuilder::text_field(
+                        TextFieldBuilder::default()
+                            .font("fonts/FiraMono-Medium.ttf")
+                            .placeholder_text("Enter your name"),
+                    )
+                    .background(BackgroundBuilder::color(Color::WHITE))
                     .position(PositionBuilder::relative().size(Val::Px(300.0), Val::Auto)),
                 ),
         )

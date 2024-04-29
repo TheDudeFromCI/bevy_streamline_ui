@@ -68,7 +68,7 @@ pub struct TextSectionBuilder {
     font: String,
 
     /// The size of the text.
-    text_size: f32,
+    font_size: f32,
 
     /// The color of the text.
     color: Color,
@@ -80,7 +80,7 @@ impl TextSectionBuilder {
         Self {
             text: text.into(),
             font: Default::default(),
-            text_size: 16.0,
+            font_size: 16.0,
             color: Color::BLACK,
         }
     }
@@ -92,8 +92,8 @@ impl TextSectionBuilder {
     }
 
     /// Sets the size of the text.
-    pub fn text_size(mut self, text_size: f32) -> Self {
-        self.text_size = text_size;
+    pub fn font_size(mut self, text_size: f32) -> Self {
+        self.font_size = text_size;
         self
     }
 
@@ -109,7 +109,7 @@ impl From<TextSectionBuilder> for NodeTextSection {
         Self {
             text: builder.text,
             font: builder.font,
-            text_size: builder.text_size,
+            font_size: builder.font_size,
             color: builder.color,
         }
     }

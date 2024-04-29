@@ -7,6 +7,7 @@ mod node;
 mod position;
 mod tex_scaling;
 mod text;
+mod text_field;
 
 pub use background::*;
 pub use bundle::*;
@@ -14,3 +15,4 @@ pub use node::*;
 pub use position::*;
 pub use tex_scaling::*;
 pub use text::*;
+pub use text_field::*;

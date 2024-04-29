@@ -1,6 +1,6 @@
 //! A builder for defining a [`UiNode`].
 
-use crate::prelude::{NodeBackground, NodePosition, NodeText, UiNode};
+use crate::prelude::{NodeBackground, NodePosition, NodeText, NodeTextField, UiNode};
 
 /// A builder for defining a [`UiNode`].
 #[derive(Debug, Default, Clone)]
@@ -21,6 +21,14 @@ impl UiNodeBuilder {
     pub fn text<T: Into<NodeText>>(text: T) -> TextNodeBuilder {
         TextNodeBuilder {
             text: text.into(),
+            ..Default::default()
+        }
+    }
+
+    /// Sets the type of the node to be a text field.
+    pub fn text_field<T: Into<NodeTextField>>(field: T) -> TextFieldNodeBuilder {
+        TextFieldNodeBuilder {
+            text_field: field.into(),
             ..Default::default()
         }
     }
@@ -131,6 +139,49 @@ impl From<TextNodeBuilder> for UiNode {
             background: builder.background,
             position: builder.position,
             text: builder.text,
+        }
+    }
+}
+
+/// A builder for defining a text field node.
+#[derive(Debug, Default, Clone)]
+pub struct TextFieldNodeBuilder {
+    /// The background of the text field.
+    background: NodeBackground,
+
+    /// The position of the text field.
+    position: NodePosition,
+
+    /// The text field data for the text field.
+    text_field: NodeTextField,
+}
+
+impl TextFieldNodeBuilder {
+    /// Sets the background of the text field.
+    pub fn background<T: Into<NodeBackground>>(mut self, background: T) -> Self {
+        self.background = background.into();
+        self
+    }
+
+    /// Sets the position of the text field.
+    pub fn position<T: Into<NodePosition>>(mut self, position: T) -> Self {
+        self.position = position.into();
+        self
+    }
+
+    /// Sets the text field data for the text field.
+    pub fn text_field<T: Into<NodeTextField>>(mut self, text_field: T) -> Self {
+        self.text_field = text_field.into();
+        self
+    }
+}
+
+impl From<TextFieldNodeBuilder> for UiNode {
+    fn from(builder: TextFieldNodeBuilder) -> Self {
+        UiNode::TextField {
+            background: builder.background,
+            position: builder.position,
+            text_field: builder.text_field,
         }
     }
 }

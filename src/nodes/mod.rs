@@ -16,7 +16,10 @@ use crate::prelude::{
     NodeChildren,
     NodePosition,
     NodeText,
+    NodeTextField,
 };
+
+pub mod text_field;
 
 /// A trait for UI node builders that can be built into entities.
 #[derive(Debug, Clone)]
@@ -50,6 +53,18 @@ pub enum UiNode {
 
         /// The text data for the text.
         text: NodeText,
+    },
+
+    /// A text field node is a node that contains a text field.
+    TextField {
+        /// The background of the text field.
+        background: NodeBackground,
+
+        /// The position of the text field.
+        position: NodePosition,
+
+        /// The text field data for the text field.
+        text_field: NodeTextField,
     },
 }
 
@@ -114,6 +129,26 @@ impl UiNode {
 
                 text.apply_to_node(&mut text_node, asset_server);
                 text_node.build(cmd, asset_server);
+            }
+
+            UiNode::TextField {
+                background,
+                position,
+                text_field,
+            } => {
+                let mut container_node = NodeBundleBuilder::default();
+                container_node.set_parent(parent);
+
+                background.apply_to_node(&mut container_node, asset_server);
+                position.apply_to_node(&mut container_node, asset_server);
+                text_field.apply_to_parent(&mut container_node, asset_server);
+                let container_id = container_node.build(cmd, asset_server);
+
+                let mut text_field_node = NodeBundleBuilder::default();
+                text_field_node.set_parent(Some(container_id));
+
+                text_field.apply_to_node(&mut text_field_node, asset_server);
+                text_field_node.build(cmd, asset_server);
             }
         }
     }

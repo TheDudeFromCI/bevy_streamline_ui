@@ -8,7 +8,9 @@
 #![warn(clippy::missing_docs_in_private_items)]
 #![warn(rustdoc::missing_crate_level_docs)]
 
+use bevy::asset::load_internal_binary_asset;
 use bevy::prelude::*;
+use nodes::text_field::CURSOR_HANDLE;
 
 pub mod blocks;
 pub mod builders;
@@ -27,5 +29,14 @@ pub mod prelude {
 /// buttons, GUIs, popups, etc, to be created and managed with minimal effort.
 pub struct StreamlineUIPlugin;
 impl Plugin for StreamlineUIPlugin {
-    fn build(&self, _app: &mut App) {}
+    fn build(&self, _app: &mut App) {
+        load_internal_binary_asset!(
+            _app,
+            CURSOR_HANDLE,
+            "../assets/fonts/Cursor.ttf",
+            |bytes: &[u8], _path: String| { Font::try_from_bytes(bytes.to_vec()).unwrap() }
+        );
+
+        _app.add_systems(Update, nodes::text_field::handle_text_input);
+    }
 }
